@@ -13,6 +13,7 @@ export default function Home() {
   const [resume, setResume] = useState("");
   const [job, setJob] = useState("");
   const [file, setFile] = useState(null);
+  const [error, setError] = useState("")
 
   const handleChange = async (e) => {
     const file = e.target.files[0];
@@ -26,7 +27,13 @@ export default function Home() {
       });
       const result = await response.json();
       console.log(result);
-      if(result.status == 200) setResume(result.body.text)
+      if (result.status == 200) {setResume(result.body.text); setError("");}
+      else {
+        setError(result.body.error)
+        setResume("");
+        setFile(null);
+        e.target.value = "";
+      }
     } catch (error) {
       console.error("Error parsing PDF:", error);
     }
@@ -49,6 +56,7 @@ export default function Home() {
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="picture">Resume</Label>
           <Input onChange={handleChange} id="picture" type="file" />
+          <div className="text-red-500">{error}</div>
         </div>
         <Textarea
           placeholder="Paste your Resume here"

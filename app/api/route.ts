@@ -7,12 +7,15 @@ export async function POST(request: NextApiRequest) {
   try {
     const formData = await request.formData();
     const pdfFile = formData.get('pdf');
+    if(pdfFile.type != 'application/pdf') {
+      throw new Error("Please add a PDF file!")
+    }
     const pdfBytes = await pdfFile.arrayBuffer();
 
     const data = await pdf(pdfBytes);
 
     const text = data.text;
-    
+
     return Response.json({
       status: 200,
       body: { text },
